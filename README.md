@@ -1,6 +1,6 @@
 # ControleEntregaSB
 
-##Requisitos Principais
+## Requisitos Principais
 - número de controle
 - endereço completo(rua,numero,bairro,ponto referencia)
 - quantidade de volumes
@@ -8,7 +8,7 @@
 - PDV
 - Operador(a)
 - Motorista
-##Funcionalidades Previstas
+## Funcionalidades Previstas
 - tela de lançamento de entrega
 - tela de controle de entrega
 - tela de relatório de entregas(filtro de período, motorista, etc.)
