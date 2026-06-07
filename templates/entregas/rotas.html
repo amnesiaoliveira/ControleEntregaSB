@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Rotas | Super Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Romaneio</p>
+    <h1>Rotas de entrega</h1>
+  </div>
+  <a class="button primary" href="{% url 'entregas:rota_criar' %}">+ Montar rota</a>
+</section>
+
+<section class="toolbar">
+  <form class="filter-form" method="get">
+    <label>
+      <span>Motorista</span>
+      <input type="search" name="motorista" value="{{ motorista }}" placeholder="Nome do motorista">
+    </label>
+    <label>
+      <span>Status</span>
+      <select name="status">
+        <option value="">Todos</option>
+        {% for value, label in status_choices %}
+          <option value="{{ value }}" {% if status_atual == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button class="button secondary" type="submit">Filtrar</button>
+  </form>
+</section>
+
+<section class="table-panel" aria-label="Lista de rotas">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Rota</th>
+        <th>Motorista</th>
+        <th>Saída</th>
+        <th>Entregas</th>
+        <th>Volumes</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rota in rotas %}
+        <tr>
+          <td><a class="table-link" href="{{ rota.get_absolute_url }}">{{ rota.numero_rota }}</a></td>
+          <td>{{ rota.motorista }}</td>
+          <td>{{ rota.saida_em|date:"d/m/Y H:i" }}</td>
+          <td>{{ rota.total_entregas }}</td>
+          <td>{{ rota.total_volumes }}</td>
+          <td><span class="status-pill rota-{{ rota.status }}">{{ rota.get_status_display }}</span></td>
+          <td><a class="icon-action" href="{{ rota.get_absolute_url }}">Abrir</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7" class="empty-state">Nenhuma rota encontrada.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

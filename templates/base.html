@@ -1,0 +1,47 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Controle de Entregas | Supermercado Baranda{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{% url 'entregas:dashboard' %}">
+      <img class="brand-logo" src="{% static 'img/image.png' %}" width="50" alt="Super Baranda">
+      <span>
+        <strong>Super Baranda</strong>
+        <small>Controle de entregas</small>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="{% url 'entregas:dashboard' %}">Dashboard</a>
+      <a href="{% url 'entregas:controle' %}">Controle</a>
+      <a href="{% url 'entregas:criar' %}">Lançamento</a>
+      <a href="{% url 'entregas:rotas' %}">Rotas</a>
+      <a href="{% url 'entregas:cadastros' %}">Cadastros</a>
+      <a href="{% url 'entregas:relatorio' %}">Relatório</a>
+      {% if user.is_authenticated %}
+        <form class="logout-form" method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit">Sair</button>
+        </form>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    {% if messages %}
+      <div class="messages" aria-live="polite">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

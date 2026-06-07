@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Super Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Hoje, {{ hoje|date:"d/m/Y" }}</p>
+    <h1>Dashboard de entregas</h1>
+  </div>
+  <div class="heading-actions">
+    <a class="button secondary" href="{% url 'entregas:rota_criar' %}">Montar rota</a>
+    <a class="button primary" href="{% url 'entregas:criar' %}">+ Nova entrega</a>
+  </div>
+</section>
+
+<section class="metrics-grid" aria-label="Resumo operacional">
+  <article class="metric"><span>Hoje</span><strong>{{ total_hoje }}</strong></article>
+  <article class="metric"><span>Pendentes</span><strong>{{ pendentes }}</strong></article>
+  <article class="metric"><span>Em rota</span><strong>{{ em_rota }}</strong></article>
+  <article class="metric"><span>Rotas ativas</span><strong>{{ rotas_ativas }}</strong></article>
+  <article class="metric"><span>Atrasadas</span><strong>{{ atrasadas }}</strong></article>
+  <article class="metric"><span>Volumes em aberto</span><strong>{{ volumes_pendentes }}</strong></article>
+</section>
+
+<section class="dashboard-grid">
+  <article class="detail-panel">
+    <h2>Em aberto por motorista</h2>
+    <table class="data-table compact-table">
+      <thead><tr><th>Motorista</th><th>Entregas</th><th>Volumes</th></tr></thead>
+      <tbody>
+        {% for item in por_motorista %}
+          <tr><td>{{ item.motorista|default:"Sem motorista" }}</td><td>{{ item.entregas }}</td><td>{{ item.volumes }}</td></tr>
+        {% empty %}
+          <tr><td colspan="3" class="empty-state">Sem entregas em aberto.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </article>
+
+  <article class="detail-panel">
+    <h2>Rotas ativas</h2>
+    <div class="stack-list">
+      {% for rota in rotas_ativas_lista %}
+        <a href="{{ rota.get_absolute_url }}">
+          <strong>{{ rota.numero_rota }} - {{ rota.motorista }}</strong>
+          <span>{{ rota.total_entregas }} entrega(s), {{ rota.total_volumes }} volume(s)</span>
+        </a>
+      {% empty %}
+        <p class="empty-state">Nenhuma rota ativa.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="detail-panel">
+    <h2>Atrasadas</h2>
+    <div class="stack-list">
+      {% for entrega in atrasadas_lista %}
+        <a href="{{ entrega.get_absolute_url }}">
+          <strong>{{ entrega.numero_controle }} - {{ entrega.cliente }}</strong>
+          <span>Prevista para {{ entrega.data_prevista|date:"d/m/Y" }}</span>
+        </a>
+      {% empty %}
+        <p class="empty-state">Nenhuma entrega atrasada.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="detail-panel">
+    <h2>Reagendadas</h2>
+    <div class="stack-list">
+      {% for entrega in reagendadas %}
+        <a href="{{ entrega.get_absolute_url }}">
+          <strong>{{ entrega.numero_controle }} - {{ entrega.cliente }}</strong>
+          <span>Nova data: {{ entrega.reagendada_para|date:"d/m/Y" }}</span>
+        </a>
+      {% empty %}
+        <p class="empty-state">Nenhuma entrega reagendada.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}

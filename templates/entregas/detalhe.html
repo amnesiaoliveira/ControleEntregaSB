@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Entrega {{ entrega.numero_controle }} | Supermercado Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Entrega {{ entrega.numero_controle }}</p>
+    <h1>{{ entrega.cliente }}</h1>
+  </div>
+  <div class="heading-actions">
+    <a class="button secondary" href="{% url 'entregas:controle' %}">Voltar</a>
+    <a class="button secondary" href="{% url 'entregas:editar' entrega.pk %}">Editar</a>
+  </div>
+</section>
+
+<section class="detail-layout">
+  <article class="detail-panel">
+    <h2>Dados da entrega</h2>
+    <dl class="detail-list">
+      <div><dt>Status</dt><dd><span class="status-pill {{ entrega.status }}">{{ entrega.get_status_display }}</span></dd></div>
+      <div><dt>Endereço</dt><dd>{{ entrega.endereco_completo }}</dd></div>
+      <div><dt>Volumes</dt><dd>{{ entrega.volumes }}</dd></div>
+      <div><dt>Data prevista</dt><dd>{{ entrega.data_prevista|date:"d/m/Y" }}</dd></div>
+      <div><dt>PDV</dt><dd>{{ entrega.pdv }}</dd></div>
+      <div><dt>Operador(a)</dt><dd>{{ entrega.operador }}</dd></div>
+      <div><dt>Motorista</dt><dd>{{ entrega.motorista }}</dd></div>
+      <div><dt>Rota</dt><dd>{% if entrega.rota %}<a class="table-link" href="{{ entrega.rota.get_absolute_url }}">{{ entrega.rota.numero_rota }}</a>{% else %}Sem rota{% endif %}</dd></div>
+      <div><dt>Motivo</dt><dd>{{ entrega.motivo_insucesso|default:"-" }}</dd></div>
+      <div><dt>Reagendada para</dt><dd>{{ entrega.reagendada_para|date:"d/m/Y"|default:"-" }}</dd></div>
+      <div><dt>Recebedor</dt><dd>{{ entrega.recebedor_nome|default:"-" }}</dd></div>
+      <div><dt>Observações</dt><dd>{{ entrega.observacoes|default:"Sem observações" }}</dd></div>
+    </dl>
+  </article>
+
+  <aside class="status-panel">
+    <h2>Fechamento</h2>
+    <form class="status-actions" method="post" action="{% url 'entregas:fechar_entrega' entrega.pk %}">
+      {% csrf_token %}
+      {% include "entregas/partials/field.html" with field=fechamento_form.status %}
+      {% include "entregas/partials/field.html" with field=fechamento_form.motivo_insucesso %}
+      {% include "entregas/partials/field.html" with field=fechamento_form.reagendada_para %}
+      {% include "entregas/partials/field.html" with field=fechamento_form.recebedor_nome %}
+      {% include "entregas/partials/field.html" with field=fechamento_form.recebedor_documento %}
+      {% include "entregas/partials/field.html" with field=fechamento_form.comprovante_observacao %}
+      <button class="button primary full" type="submit">Registrar fechamento</button>
+    </form>
+  </aside>
+</section>
+
+<section class="detail-panel timeline-panel">
+  <h2>Histórico</h2>
+  <div class="timeline">
+    {% for evento in entrega.eventos.all %}
+      <article>
+        <strong>{{ evento.get_tipo_display }}</strong>
+        <span>{{ evento.criado_em|date:"d/m/Y H:i" }}{% if evento.usuario %} por {{ evento.usuario }}{% endif %}</span>
+        <p>{{ evento.descricao }}</p>
+      </article>
+    {% empty %}
+      <p class="empty-state">Nenhum evento registrado.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

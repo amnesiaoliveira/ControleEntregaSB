@@ -1,0 +1,50 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Romaneio {{ rota.numero_rota }}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="print-page">
+  <main class="print-sheet">
+    <header class="print-header">
+      <img class="brand-logo" src="{% static 'img/image.png' %}" alt="Super Baranda">
+      <div>
+        <h1>Romaneio de entrega</h1>
+        <p>{{ rota.numero_rota }} | Motorista: {{ rota.motorista }} | Saída: {{ rota.saida_em|date:"d/m/Y H:i" }}</p>
+      </div>
+    </header>
+
+    <table class="data-table print-table">
+      <thead>
+        <tr>
+          <th>Controle</th>
+          <th>Cliente</th>
+          <th>Endereço</th>
+          <th>Volumes</th>
+          <th>Recebimento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entrega in rota.entregas.all %}
+          <tr>
+            <td>{{ entrega.numero_controle }}</td>
+            <td>{{ entrega.cliente }}</td>
+            <td>{{ entrega.endereco_completo }}</td>
+            <td>{{ entrega.volumes }}</td>
+            <td class="signature-cell"></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <section class="print-signatures">
+      <div>Responsável pela saída</div>
+      <div>Motorista</div>
+      <div>Conferência de retorno</div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Rota {{ rota.numero_rota }} | Super Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Rota {{ rota.numero_rota }}</p>
+    <h1>{{ rota.motorista }}</h1>
+  </div>
+  <div class="heading-actions">
+    <a class="button secondary" href="{% url 'entregas:rota_imprimir' rota.pk %}" target="_blank">Imprimir romaneio</a>
+    <a class="button secondary" href="{% url 'entregas:rotas' %}">Voltar</a>
+  </div>
+</section>
+
+<section class="detail-layout">
+  <article class="detail-panel">
+    <h2>Entregas da rota</h2>
+    <form method="post" action="{% url 'entregas:rota_retorno' rota.pk %}">
+      {% csrf_token %}
+      <div class="route-summary">
+        <span><strong>{{ rota.total_entregas }}</strong> entrega(s)</span>
+        <span><strong>{{ rota.total_volumes }}</strong> volume(s)</span>
+        <span><span class="status-pill rota-{{ rota.status }}">{{ rota.get_status_display }}</span></span>
+      </div>
+
+      <div class="selection-list">
+        {% for entrega in rota.entregas.all %}
+          <label class="selection-row">
+            <input type="checkbox" name="entregas" value="{{ entrega.id }}" {% if entrega.status == "entregue" or entrega.status == "cancelada" %}disabled{% endif %}>
+            <span>
+              <strong>{{ entrega.numero_controle }} - {{ entrega.cliente }}</strong>
+              <small>{{ entrega.endereco_completo }} | {{ entrega.volumes }} volume(s) | {{ entrega.get_status_display }}</small>
+            </span>
+          </label>
+        {% endfor %}
+      </div>
+
+      <div class="return-box">
+        {% include "entregas/partials/field.html" with field=retorno_form.observacoes_retorno %}
+        <div class="form-grid">
+          {% include "entregas/partials/field.html" with field=fechamento_form.status %}
+          {% include "entregas/partials/field.html" with field=fechamento_form.motivo_insucesso %}
+          {% include "entregas/partials/field.html" with field=fechamento_form.reagendada_para %}
+          {% include "entregas/partials/field.html" with field=fechamento_form.recebedor_nome %}
+          {% include "entregas/partials/field.html" with field=fechamento_form.recebedor_documento %}
+          {% include "entregas/partials/field.html" with field=fechamento_form.comprovante_observacao %}
+        </div>
+        <div class="form-actions">
+          <button class="button primary" type="submit">Registrar retorno das selecionadas</button>
+        </div>
+      </div>
+    </form>
+  </article>
+
+  <aside class="status-panel">
+    <h2>Dados da saída</h2>
+    <dl class="detail-list stacked">
+      <div><dt>Responsável</dt><dd>{{ rota.responsavel_saida|default:"Não informado" }}</dd></div>
+      <div><dt>Saída</dt><dd>{{ rota.saida_em|date:"d/m/Y H:i" }}</dd></div>
+      <div><dt>Observações</dt><dd>{{ rota.observacoes_saida|default:"Sem observações" }}</dd></div>
+      <div><dt>Retorno</dt><dd>{{ rota.observacoes_retorno|default:"Sem retorno registrado" }}</dd></div>
+    </dl>
+  </aside>
+</section>
+{% endblock %}

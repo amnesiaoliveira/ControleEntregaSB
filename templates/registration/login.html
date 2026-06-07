@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar | Super Baranda</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-panel">
+      <img class="brand-logo login-logo" src="{% static 'img/image.png' %}" alt="Super Baranda">
+      <h1>Controle de entregas</h1>
+      <form method="post">
+        {% csrf_token %}
+        {% include "entregas/partials/field.html" with field=form.username %}
+        {% include "entregas/partials/field.html" with field=form.password %}
+        {% if form.errors %}
+          <p class="form-errors">Usuário ou senha inválidos.</p>
+        {% endif %}
+        <button class="button primary full" type="submit">Entrar</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

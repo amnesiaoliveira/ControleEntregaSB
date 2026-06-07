@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastros | Super Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Base operacional</p>
+    <h1>Cadastros</h1>
+  </div>
+</section>
+
+<section class="dashboard-grid">
+  <article class="entry-form">
+    <h2>Motoristas</h2>
+    <form method="post" class="mini-form">
+      {% csrf_token %}
+      <input type="hidden" name="tipo" value="motorista">
+      {% for field in motorista_form %}
+        {% include "entregas/partials/field.html" with field=field %}
+      {% endfor %}
+      <button class="button primary" type="submit">Salvar motorista</button>
+    </form>
+    <div class="stack-list compact-list">
+      {% for motorista in motoristas %}
+        <span><strong>{{ motorista.nome }}</strong><small>{{ motorista.telefone|default:"Sem telefone" }}{% if not motorista.ativo %} | Inativo{% endif %}</small></span>
+      {% empty %}<p class="empty-state">Nenhum motorista cadastrado.</p>{% endfor %}
+    </div>
+  </article>
+
+  <article class="entry-form">
+    <h2>Operadores</h2>
+    <form method="post" class="mini-form">
+      {% csrf_token %}
+      <input type="hidden" name="tipo" value="operador">
+      {% for field in operador_form %}
+        {% include "entregas/partials/field.html" with field=field %}
+      {% endfor %}
+      <button class="button primary" type="submit">Salvar operador</button>
+    </form>
+    <div class="stack-list compact-list">
+      {% for operador in operadores %}
+        <span><strong>{{ operador.nome }}</strong><small>{% if operador.ativo %}Ativo{% else %}Inativo{% endif %}</small></span>
+      {% empty %}<p class="empty-state">Nenhum operador cadastrado.</p>{% endfor %}
+    </div>
+  </article>
+
+  <article class="entry-form">
+    <h2>Motivos de insucesso</h2>
+    <form method="post" class="mini-form">
+      {% csrf_token %}
+      <input type="hidden" name="tipo" value="motivo">
+      {% for field in motivo_form %}
+        {% include "entregas/partials/field.html" with field=field %}
+      {% endfor %}
+      <button class="button primary" type="submit">Salvar motivo</button>
+    </form>
+    <div class="stack-list compact-list">
+      {% for motivo in motivos %}
+        <span><strong>{{ motivo.descricao }}</strong><small>{% if motivo.permite_reagendamento %}Permite reagendamento{% else %}Não reagenda{% endif %}</small></span>
+      {% empty %}<p class="empty-state">Nenhum motivo cadastrado.</p>{% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}

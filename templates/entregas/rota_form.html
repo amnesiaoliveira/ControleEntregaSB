@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Montar Rota | Super Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Saída de rota</p>
+    <h1>Montar rota</h1>
+  </div>
+  <a class="button secondary" href="{% url 'entregas:rotas' %}">Ver rotas</a>
+</section>
+
+<section class="toolbar">
+  <form class="filter-form" method="get">
+    <label>
+      <span>Filtrar motorista</span>
+      <input list="motoristas" name="motorista" value="{{ motorista_filtro }}" placeholder="Ex.: Carlos">
+      <datalist id="motoristas">
+        {% for motorista in motoristas_pendentes %}
+          <option value="{{ motorista }}"></option>
+        {% endfor %}
+      </datalist>
+    </label>
+    <button class="button secondary" type="submit">Filtrar pendentes</button>
+    <a class="button secondary" href="{% url 'entregas:rota_criar' %}">Limpar</a>
+  </form>
+</section>
+
+<form class="entry-form" method="post">
+  {% csrf_token %}
+  <div class="control-preview">
+    <span>Próxima rota</span>
+    <strong>{{ proximo_numero_rota }}</strong>
+  </div>
+
+  <fieldset>
+    <legend>Dados da saída</legend>
+    <div class="form-grid">
+      {% include "entregas/partials/field.html" with field=form.motorista_cadastro %}
+      {% include "entregas/partials/field.html" with field=form.motorista %}
+      {% include "entregas/partials/field.html" with field=form.responsavel_saida %}
+      {% include "entregas/partials/field.html" with field=form.observacoes_saida %}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Entregas pendentes</legend>
+    <div class="selection-list">
+      {% for entrega in entregas %}
+        <label class="selection-row">
+          <input type="checkbox" name="entregas" value="{{ entrega.id }}">
+          <span>
+            <strong>{{ entrega.numero_controle }} - {{ entrega.cliente }}</strong>
+            <small>{{ entrega.endereco_completo }} | {{ entrega.volumes }} volume(s) | Motorista sugerido: {{ entrega.motorista }}</small>
+          </span>
+        </label>
+      {% empty %}
+        <div class="empty-state">Nenhuma entrega pendente disponível para rota.</div>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <button class="button primary" type="submit">Criar rota e marcar em rota</button>
+    <a class="button secondary" href="{% url 'entregas:controle' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

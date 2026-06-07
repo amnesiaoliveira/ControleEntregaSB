@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório de Entregas | Supermercado Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Análise</p>
+    <h1>Relatório de entregas</h1>
+  </div>
+  <div class="heading-actions">
+    <button class="button secondary" form="relatorio-form" name="export" value="csv" type="submit">Exportar CSV</button>
+    <a class="button primary" href="{% url 'entregas:criar' %}">+ Nova entrega</a>
+  </div>
+</section>
+
+<section class="toolbar">
+  <form id="relatorio-form" class="filter-form report-filter" method="get">
+    {% for field in form %}
+      {% include "entregas/partials/field.html" with field=field %}
+    {% endfor %}
+    <button class="button secondary" type="submit">Aplicar filtros</button>
+  </form>
+</section>
+
+<section class="metrics-grid compact" aria-label="Resumo do relatório">
+  <article class="metric">
+    <span>Entregas</span>
+    <strong>{{ total_entregas }}</strong>
+  </article>
+  <article class="metric">
+    <span>Volumes</span>
+    <strong>{{ total_volumes }}</strong>
+  </article>
+  {% for item in resumo_status %}
+    <article class="metric">
+      <span>{{ item.status }}</span>
+      <strong>{{ item.total }}</strong>
+    </article>
+  {% endfor %}
+</section>
+
+<section class="table-panel" aria-label="Resultado do relatório">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Prevista</th>
+        <th>Controle</th>
+        <th>Cliente</th>
+        <th>Bairro</th>
+        <th>Motorista</th>
+        <th>Rota</th>
+        <th>Volumes</th>
+        <th>Status</th>
+        <th>Motivo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entrega in entregas %}
+        <tr>
+          <td>{{ entrega.criado_em|date:"d/m/Y H:i" }}</td>
+          <td>{{ entrega.data_prevista|date:"d/m/Y" }}</td>
+          <td><a class="table-link" href="{{ entrega.get_absolute_url }}">{{ entrega.numero_controle }}</a></td>
+          <td>{{ entrega.cliente }}</td>
+          <td>{{ entrega.bairro }}</td>
+          <td>{{ entrega.motorista }}</td>
+          <td>
+            {% if entrega.rota %}
+              <a class="table-link" href="{{ entrega.rota.get_absolute_url }}">{{ entrega.rota.numero_rota }}</a>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>{{ entrega.volumes }}</td>
+          <td><span class="status-pill {{ entrega.status }}">{{ entrega.get_status_display }}</span></td>
+          <td>{{ entrega.motivo_insucesso|default:"-" }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="10" class="empty-state">Nenhuma entrega no período informado.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

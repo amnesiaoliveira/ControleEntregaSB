@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Controle de Entregas | Supermercado Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Expedição</p>
+    <h1>Controle de entregas</h1>
+  </div>
+  <div class="heading-actions">
+    <a class="button secondary" href="{% url 'entregas:rota_criar' %}">Montar rota</a>
+    <a class="button primary" href="{% url 'entregas:criar' %}">+ Nova entrega</a>
+  </div>
+</section>
+
+<section class="metrics-grid" aria-label="Resumo de entregas">
+  <article class="metric">
+    <span>Hoje</span>
+    <strong>{{ total_hoje }}</strong>
+  </article>
+  <article class="metric">
+    <span>Pendentes</span>
+    <strong>{{ pendentes }}</strong>
+  </article>
+  <article class="metric">
+    <span>Em rota</span>
+    <strong>{{ em_rota }}</strong>
+  </article>
+  <article class="metric">
+    <span>Rotas ativas</span>
+    <strong>{{ rotas_ativas }}</strong>
+  </article>
+  <article class="metric">
+    <span>Entregues hoje</span>
+    <strong>{{ entregues_hoje }}</strong>
+  </article>
+  <article class="metric">
+    <span>Volumes em aberto</span>
+    <strong>{{ volumes_pendentes }}</strong>
+  </article>
+</section>
+
+<section class="toolbar">
+  <form class="filter-form" method="get">
+    <label>
+      <span>Buscar</span>
+      <input type="search" name="q" value="{{ busca }}" placeholder="Controle, cliente, bairro ou motorista">
+    </label>
+    <label>
+      <span>Status</span>
+      <select name="status">
+        <option value="">Todos</option>
+        {% for value, label in status_choices %}
+          <option value="{{ value }}" {% if status_atual == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button class="button secondary" type="submit">Filtrar</button>
+  </form>
+</section>
+
+<section class="table-panel" aria-label="Lista de entregas">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Controle</th>
+        <th>Cliente</th>
+        <th>Endereço</th>
+        <th>Prevista</th>
+        <th>Volumes</th>
+        <th>PDV</th>
+        <th>Operador(a)</th>
+        <th>Motorista</th>
+        <th>Rota</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entrega in entregas %}
+        <tr>
+          <td><a class="table-link" href="{{ entrega.get_absolute_url }}">{{ entrega.numero_controle }}</a></td>
+          <td>{{ entrega.cliente }}</td>
+          <td>{{ entrega.endereco_completo }}</td>
+          <td>{{ entrega.data_prevista|date:"d/m/Y" }}</td>
+          <td>{{ entrega.volumes }}</td>
+          <td>{{ entrega.pdv }}</td>
+          <td>{{ entrega.operador }}</td>
+          <td>{{ entrega.motorista }}</td>
+          <td>
+            {% if entrega.rota %}
+              <a class="table-link" href="{{ entrega.rota.get_absolute_url }}">{{ entrega.rota.numero_rota }}</a>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td><span class="status-pill {{ entrega.status }}">{{ entrega.get_status_display }}</span></td>
+          <td class="actions-cell">
+            <a class="icon-action" href="{% url 'entregas:editar' entrega.pk %}" title="Editar">Editar</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="11" class="empty-state">Nenhuma entrega encontrada.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} | Supermercado Baranda{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Lançamento</p>
+    <h1>{{ titulo }}</h1>
+  </div>
+  <a class="button secondary" href="{% url 'entregas:controle' %}">Voltar</a>
+</section>
+
+<form class="entry-form" method="post" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="form-errors">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  {% if proximo_numero_controle %}
+    <div class="control-preview">
+      <span>Próximo controle</span>
+      <strong>{{ proximo_numero_controle }}</strong>
+    </div>
+  {% endif %}
+
+  <fieldset>
+    <legend>Identificação</legend>
+    <div class="form-grid">
+      {% include "entregas/partials/field.html" with field=form.cliente %}
+      {% include "entregas/partials/field.html" with field=form.volumes %}
+      {% include "entregas/partials/field.html" with field=form.data_prevista %}
+      {% include "entregas/partials/field.html" with field=form.status %}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Endereço</legend>
+    <div class="form-grid address-grid">
+      {% include "entregas/partials/field.html" with field=form.rua %}
+      {% include "entregas/partials/field.html" with field=form.numero %}
+      {% include "entregas/partials/field.html" with field=form.bairro %}
+      {% include "entregas/partials/field.html" with field=form.ponto_referencia %}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Operação</legend>
+    <div class="form-grid">
+      {% include "entregas/partials/field.html" with field=form.pdv %}
+      {% include "entregas/partials/field.html" with field=form.operador_cadastro %}
+      {% include "entregas/partials/field.html" with field=form.operador %}
+      {% include "entregas/partials/field.html" with field=form.motorista_cadastro %}
+      {% include "entregas/partials/field.html" with field=form.motorista %}
+      {% include "entregas/partials/field.html" with field=form.observacoes %}
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <button class="button primary" type="submit">Salvar entrega</button>
+    <a class="button secondary" href="{% url 'entregas:controle' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

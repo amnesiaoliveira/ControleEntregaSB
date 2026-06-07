@@ -1,0 +1,7 @@
+<label class="form-field {% if field.errors %}has-error{% endif %}">
+  <span>{{ field.label }}</span>
+  {{ field }}
+  {% if field.errors %}
+    <small>{{ field.errors|striptags }}</small>
+  {% endif %}
+</label>
